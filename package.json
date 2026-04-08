@@ -4,6 +4,10 @@
   "description": "Inspect and edit Tailwind utility classes as plain CSS in an interactive CodeLens-powered editor.",
   "version": "1.0.0",
   "publisher": "cardixxnetwork",
+  "author": {
+    "name": "Cardixx",
+    "url": "https://cardixx.com"
+  },
   "license": "MIT",
   "icon": "icon.png",
   "repository": {

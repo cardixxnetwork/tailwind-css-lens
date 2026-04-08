@@ -112,12 +112,6 @@ export class CssEditorPanel {
       return;
     }
 
-    if (result.warnings.length > 0) {
-      vscode.window.showInformationMessage(
-        `Some properties used arbitrary values: ${result.warnings.join("; ")}`
-      );
-    }
-
     const documentUri = vscode.Uri.parse(this.editContext.documentUri);
     const edit = new vscode.WorkspaceEdit();
     const range = new vscode.Range(
@@ -132,7 +126,6 @@ export class CssEditorPanel {
     if (success) {
       this.editContext.valueEnd =
         this.editContext.valueStart + result.classes.length;
-      vscode.window.showInformationMessage(`Applied: ${result.classes}`);
     } else {
       vscode.window.showErrorMessage("Failed to apply edit.");
     }

@@ -1,5 +1,11 @@
 src/
 .git/
+.github/
+.claude/
 tsconfig.json
+esbuild.webview.mjs
 node_modules/.cache/
 *.map
+*.vsix
+.DS_Store
+.gitignore

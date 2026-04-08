@@ -1,13 +1,28 @@
 {
-  "name": "css-to-tailwind-inline",
-  "displayName": "CSS to Tailwind Inline",
-  "description": "Write plain CSS in a popup and auto-convert it to Tailwind utility classes appended to className/class attributes.",
-  "version": "0.0.1",
-  "publisher": "ufukomer",
+  "name": "tailwind-css-lens",
+  "displayName": "Tailwind CSS Lens",
+  "description": "Inspect and edit Tailwind utility classes as plain CSS in an interactive CodeLens-powered editor.",
+  "version": "1.0.0",
+  "publisher": "cardixxnetwork",
+  "license": "MIT",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cardixxnetwork/tailwind-css-lens"
+  },
+  "keywords": [
+    "tailwind",
+    "css",
+    "tailwindcss",
+    "lens",
+    "editor",
+    "codelens"
+  ],
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
+    "Formatters",
     "Other"
   ],
   "activationEvents": [
@@ -25,7 +40,7 @@
       }
     ],
     "configuration": {
-      "title": "CSS to Tailwind Inline",
+      "title": "Tailwind CSS Lens",
       "properties": {
         "cssTailwind.showCodeLens": {
           "type": "boolean",

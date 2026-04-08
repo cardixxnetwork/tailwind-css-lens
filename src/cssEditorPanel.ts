@@ -48,12 +48,12 @@ export class CssEditorPanel {
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
   }
 
-  static show(
+  static async show(
     extensionUri: vscode.Uri,
     editContext: EditContext,
     existingClasses: string
-  ): void {
-    const cssDeclarations = tailwindClassesToCssDeclarations(existingClasses);
+  ): Promise<void> {
+    const cssDeclarations = await tailwindClassesToCssDeclarations(existingClasses);
 
     if (CssEditorPanel.currentPanel) {
       CssEditorPanel.currentPanel.editContext = editContext;
@@ -103,7 +103,7 @@ export class CssEditorPanel {
       return;
     }
 
-    const result = convertCssToTailwind(trimmed);
+    const result = await convertCssToTailwind(trimmed);
 
     if (!result.success) {
       vscode.window.showWarningMessage(

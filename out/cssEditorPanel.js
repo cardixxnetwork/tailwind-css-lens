@@ -55,8 +55,8 @@ class CssEditorPanel {
         this.panel.webview.onDidReceiveMessage((msg) => this.handleMessage(msg), null, this.disposables);
         this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
     }
-    static show(extensionUri, editContext, existingClasses) {
-        const cssDeclarations = (0, tailwindToCss_1.tailwindClassesToCssDeclarations)(existingClasses);
+    static async show(extensionUri, editContext, existingClasses) {
+        const cssDeclarations = await (0, tailwindToCss_1.tailwindClassesToCssDeclarations)(existingClasses);
         if (CssEditorPanel.currentPanel) {
             CssEditorPanel.currentPanel.editContext = editContext;
             CssEditorPanel.currentPanel.panel.webview.html =
@@ -87,7 +87,7 @@ class CssEditorPanel {
             vscode.window.showWarningMessage("No CSS to apply.");
             return;
         }
-        const result = (0, cssToTailwind_1.convertCssToTailwind)(trimmed);
+        const result = await (0, cssToTailwind_1.convertCssToTailwind)(trimmed);
         if (!result.success) {
             vscode.window.showWarningMessage(`CSS to Tailwind: ${result.warnings.join(", ")}`);
             return;

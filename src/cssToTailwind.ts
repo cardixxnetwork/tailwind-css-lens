@@ -31,13 +31,21 @@ function cssRuleToVariantPrefix(rule: string): string {
     return CSS_RULE_TO_VARIANT[normalized];
   }
 
-  // Arbitrary min-width: @media (min-width: Xpx) → min-[Xpx]:
+  // Arbitrary min-width: @media (min-width: X) → min-[X]:
   const minWidth = normalized.match(/@media\s*\(\s*min-width:\s*(.+?)\s*\)/);
   if (minWidth) return `min-[${minWidth[1]}]:`;
 
-  // Arbitrary max-width: @media (max-width: Xpx) → max-[Xpx]:
+  // Arbitrary width >=: @media (width >= X) → min-[X]:
+  const widthGte = normalized.match(/@media\s*\(\s*width\s*>=\s*(.+?)\s*\)/);
+  if (widthGte) return `min-[${widthGte[1]}]:`;
+
+  // Arbitrary max-width: @media (max-width: X) → max-[X]:
   const maxWidth = normalized.match(/@media\s*\(\s*max-width:\s*(.+?)\s*\)/);
   if (maxWidth) return `max-[${maxWidth[1]}]:`;
+
+  // Arbitrary width <=: @media (width <= X) → max-[X]:
+  const widthLte = normalized.match(/@media\s*\(\s*width\s*<=\s*(.+?)\s*\)/);
+  if (widthLte) return `max-[${widthLte[1]}]:`;
 
   // Pseudo-class/element selectors: &:hover → hover:, &::before → before:
   if (normalized.startsWith("&:")) {
@@ -48,6 +56,11 @@ function cssRuleToVariantPrefix(rule: string): string {
     }
     // Arbitrary selector variant
     return `[${normalized}]:`;
+  }
+
+  // Skip @media (hover: hover) — engine progressive enhancement wrapper, not a variant
+  if (normalized === "@media (hover: hover)") {
+    return "";
   }
 
   // Arbitrary @media/container query
@@ -415,7 +428,7 @@ function wrappersToVariantPrefix(wrappers: string[]): string {
   return wrappers.map(w => cssRuleToVariantPrefix(w)).join("");
 }
 
-export function convertCssToTailwind(cssInput: string): ConversionResult {
+export async function convertCssToTailwind(cssInput: string): Promise<ConversionResult> {
   const trimmed = cssInput.trim();
   if (!trimmed) {
     return { success: false, classes: "", warnings: ["Empty input"] };
@@ -448,7 +461,7 @@ export function convertCssToTailwind(cssInput: string): ConversionResult {
       }
 
       // Get the original CSS for this class
-      const originalCss = tailwindClassToCss(originalClass);
+      const originalCss = await tailwindClassToCss(originalClass);
 
       // Combine all inner CSS lines for this class
       const currentInnerCombined = cssLines.join(" ").replace(/;\s*/g, "; ").trim();

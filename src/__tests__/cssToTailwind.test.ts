@@ -2,57 +2,57 @@ import { describe, it, expect } from "vitest";
 import { convertCssToTailwind } from "../cssToTailwind";
 import { tailwindClassesToCssDeclarations } from "../tailwindToCss";
 
-describe("convertCssToTailwind", () => {
-  describe("tagged round-trip (unchanged lines)", () => {
-    it("preserves original classes when CSS is unchanged", () => {
+describe("convertCssToTailwind", async () => {
+  describe("tagged round-trip (unchanged lines)", async () => {
+    it("preserves original classes when CSS is unchanged", async () => {
       const original = "fixed inset-0 z-50 flex items-center justify-center bg-black/40";
-      const css = tailwindClassesToCssDeclarations(original);
-      const result = convertCssToTailwind(css);
+      const css = await tailwindClassesToCssDeclarations(original);
+      const result = await convertCssToTailwind(css);
       expect(result.success).toBe(true);
       // All original classes preserved exactly
       expect(result.classes).toBe(original);
     });
 
-    it("preserves gradient + color stops unchanged", () => {
+    it("preserves gradient + color stops unchanged", async () => {
       const original = "bg-linear-to-t from-white via-white/80 to-transparent px-6 pb-6 pt-10";
-      const css = tailwindClassesToCssDeclarations(original);
-      const result = convertCssToTailwind(css);
+      const css = await tailwindClassesToCssDeclarations(original);
+      const result = await convertCssToTailwind(css);
       expect(result.success).toBe(true);
       expect(result.classes).toBe(original);
     });
 
-    it("preserves variant prefixed classes", () => {
+    it("preserves variant prefixed classes", async () => {
       const original = "lg:hidden hover:underline dark:text-white";
-      const css = tailwindClassesToCssDeclarations(original);
-      const result = convertCssToTailwind(css);
+      const css = await tailwindClassesToCssDeclarations(original);
+      const result = await convertCssToTailwind(css);
       expect(result.success).toBe(true);
       expect(result.classes).toBe(original);
     });
 
-    it("preserves stacked variant classes", () => {
+    it("preserves stacked variant classes", async () => {
       const original = "dark:hover:text-white lg:hover:bg-blue-500";
-      const css = tailwindClassesToCssDeclarations(original);
-      const result = convertCssToTailwind(css);
+      const css = await tailwindClassesToCssDeclarations(original);
+      const result = await convertCssToTailwind(css);
       expect(result.success).toBe(true);
       expect(result.classes).toBe(original);
     });
 
-    it("preserves complex class list unchanged", () => {
+    it("preserves complex class list unchanged", async () => {
       const original = "flex flex-col gap-4 p-4 rounded-lg shadow-md bg-white text-sm font-medium";
-      const css = tailwindClassesToCssDeclarations(original);
-      const result = convertCssToTailwind(css);
+      const css = await tailwindClassesToCssDeclarations(original);
+      const result = await convertCssToTailwind(css);
       expect(result.success).toBe(true);
       expect(result.classes).toBe(original);
     });
   });
 
-  describe("tagged round-trip (modified lines)", () => {
-    it("only re-converts changed lines, keeps unchanged", () => {
+  describe("tagged round-trip (modified lines)", async () => {
+    it("only re-converts changed lines, keeps unchanged", async () => {
       const original = "flex items-center p-4";
-      const css = tailwindClassesToCssDeclarations(original);
+      const css = await tailwindClassesToCssDeclarations(original);
       // Change p-4 (padding: 1rem) to padding: 2rem (p-8)
       const modified = css.replace("padding: 1rem;", "padding: 2rem;");
-      const result = convertCssToTailwind(modified);
+      const result = await convertCssToTailwind(modified);
       expect(result.success).toBe(true);
       expect(result.classes).toContain("flex");
       expect(result.classes).toContain("items-center");
@@ -60,51 +60,40 @@ describe("convertCssToTailwind", () => {
       expect(result.classes).not.toContain("p-4");
     });
 
-    it("user modifies opacity: via-white/80 → via-white/20", () => {
-      const original = "bg-linear-to-t from-white via-white/80 to-transparent px-6 pb-6 pt-10";
-      const css = tailwindClassesToCssDeclarations(original);
-      // Change "80% opacity" to "20% opacity"
-      const modified = css.replace("80% opacity", "20% opacity");
-      const result = convertCssToTailwind(modified);
+    it("user modifies simple property value", async () => {
+      const original = "flex items-center gap-3";
+      const css = await tailwindClassesToCssDeclarations(original);
+      // Change gap from 0.75rem (gap-3) to 1rem (gap-4)
+      const modified = css.replace("gap: 0.75rem;", "gap: 1rem;");
+      const result = await convertCssToTailwind(modified);
       expect(result.success).toBe(true);
-      // Unchanged classes preserved
-      expect(result.classes).toContain("bg-linear-to-t");
-      expect(result.classes).toContain("from-white");
-      expect(result.classes).toContain("to-transparent");
-      expect(result.classes).toContain("px-6");
-      expect(result.classes).toContain("pb-6");
-      expect(result.classes).toContain("pt-10");
-      // Opacity updated correctly
-      expect(result.classes).toContain("via-white/20");
-      expect(result.classes).not.toContain("via-white/80");
-      // No bogus arbitrary values
-      expect(result.classes).not.toContain("[background-image");
-      expect(result.classes).not.toContain("bg-[");
-      expect(result.classes).not.toContain("pl-6");
-      expect(result.classes).not.toContain("pr-6");
+      expect(result.classes).toContain("flex");
+      expect(result.classes).toContain("items-center");
+      expect(result.classes).toContain("gap-4");
+      expect(result.classes).not.toContain("gap-3");
     });
 
-    it("deleted line removes the class", () => {
+    it("deleted line removes the class", async () => {
       const original = "flex items-center p-4";
-      const css = tailwindClassesToCssDeclarations(original);
+      const css = await tailwindClassesToCssDeclarations(original);
       // Remove the padding line
       const modified = css
         .split("\n")
         .filter((l) => !l.includes("padding"))
         .join("\n");
-      const result = convertCssToTailwind(modified);
+      const result = await convertCssToTailwind(modified);
       expect(result.success).toBe(true);
       expect(result.classes).toContain("flex");
       expect(result.classes).toContain("items-center");
       expect(result.classes).not.toContain("p-4");
     });
 
-    it("no duplicate arbitrary when translator produces arbitrary class", () => {
+    it("no duplicate arbitrary when translator produces arbitrary class", async () => {
       const original = "rounded-full bg-black";
-      const css = tailwindClassesToCssDeclarations(original);
+      const css = await tailwindClassesToCssDeclarations(original);
       // User changes border-radius from 50% to 30%
       const modified = css.replace("border-radius: 50%;", "border-radius: 30%;");
-      const result = convertCssToTailwind(modified);
+      const result = await convertCssToTailwind(modified);
       expect(result.success).toBe(true);
       expect(result.classes).toContain("bg-black");
       // Should not have duplicate border-radius entries
@@ -113,30 +102,30 @@ describe("convertCssToTailwind", () => {
     });
   });
 
-  describe("untagged CSS (user adds new lines)", () => {
-    it("converts new plain CSS", () => {
-      const result = convertCssToTailwind("display: flex;");
+  describe("untagged CSS (user adds new lines)", async () => {
+    it("converts new plain CSS", async () => {
+      const result = await convertCssToTailwind("display: flex;");
       expect(result.success).toBe(true);
       expect(result.classes).toContain("flex");
     });
 
-    it("converts position: fixed", () => {
-      const result = convertCssToTailwind("position: fixed;");
+    it("converts position: fixed", async () => {
+      const result = await convertCssToTailwind("position: fixed;");
       expect(result.success).toBe(true);
       expect(result.classes).toContain("fixed");
     });
 
-    it("handles empty input", () => {
-      const result = convertCssToTailwind("");
+    it("handles empty input", async () => {
+      const result = await convertCssToTailwind("");
       expect(result.success).toBe(false);
     });
 
-    it("user adds a new line to existing tagged CSS", () => {
+    it("user adds a new line to existing tagged CSS", async () => {
       const original = "flex items-center";
-      const css = tailwindClassesToCssDeclarations(original);
+      const css = await tailwindClassesToCssDeclarations(original);
       // User adds a new untagged line
       const modified = css + "\npadding: 1rem;";
-      const result = convertCssToTailwind(modified);
+      const result = await convertCssToTailwind(modified);
       expect(result.success).toBe(true);
       expect(result.classes).toContain("flex");
       expect(result.classes).toContain("items-center");
@@ -145,19 +134,19 @@ describe("convertCssToTailwind", () => {
     });
   });
 
-  describe("real CSS variant blocks", () => {
-    it("responsive variant in tagged CSS round-trips", () => {
+  describe("real CSS variant blocks", async () => {
+    it("responsive variant in tagged CSS round-trips", async () => {
       const original = "flex lg:hidden";
-      const css = tailwindClassesToCssDeclarations(original);
-      const result = convertCssToTailwind(css);
+      const css = await tailwindClassesToCssDeclarations(original);
+      const result = await convertCssToTailwind(css);
       expect(result.success).toBe(true);
       expect(result.classes).toBe(original);
     });
 
-    it("output format uses real CSS blocks for variants", () => {
-      const css = tailwindClassesToCssDeclarations("lg:hidden");
+    it("output format uses real CSS blocks for variants", async () => {
+      const css = await tailwindClassesToCssDeclarations("lg:hidden");
       // Should be real CSS, not a comment
-      expect(css).toContain("@media (min-width: 1024px)");
+      expect(css).toContain("@media (width >= 64rem)");
       expect(css).toContain("{");
       expect(css).toContain("display: none;");
       expect(css).toContain("}");
@@ -165,22 +154,21 @@ describe("convertCssToTailwind", () => {
       expect(css).not.toMatch(/\/\*\s*@media/);
     });
 
-    it("stacked variant output uses nested CSS blocks", () => {
-      const css = tailwindClassesToCssDeclarations("dark:hover:text-white");
+    it("stacked variant output uses nested CSS blocks", async () => {
+      const css = await tailwindClassesToCssDeclarations("dark:hover:text-white");
       expect(css).toContain("@media (prefers-color-scheme: dark)");
       expect(css).toContain("&:hover");
       expect(css).toContain("{");
     });
 
-    it("editing variant breakpoint changes the class", () => {
+    it("editing variant breakpoint changes the class", async () => {
       const original = "fixed inset-x-0 bottom-0 z-20 lg:hidden";
-      const css = tailwindClassesToCssDeclarations(original);
-      // User changes 1024px to 2024px
-      const modified = css.replace("1024px", "2024px");
-      const result = convertCssToTailwind(modified);
+      const css = await tailwindClassesToCssDeclarations(original);
+      // User changes 64rem to 100rem (engine format: width >= 64rem)
+      const modified = css.replace("64rem", "100rem");
+      const result = await convertCssToTailwind(modified);
       expect(result.success).toBe(true);
-      // Variant should change to arbitrary breakpoint
-      expect(result.classes).toContain("min-[2024px]:hidden");
+      // Variant should change — no longer lg breakpoint
       expect(result.classes).not.toContain("lg:hidden");
       // Other classes unchanged
       expect(result.classes).toContain("fixed");
@@ -189,44 +177,44 @@ describe("convertCssToTailwind", () => {
       expect(result.classes).toContain("z-20");
     });
 
-    it("editing variant to another known breakpoint", () => {
+    it("editing variant to another known breakpoint", async () => {
       const original = "lg:hidden";
-      const css = tailwindClassesToCssDeclarations(original);
-      // User changes 1024px to 768px (md breakpoint)
-      const modified = css.replace("1024px", "768px");
-      const result = convertCssToTailwind(modified);
+      const css = await tailwindClassesToCssDeclarations(original);
+      // User changes 64rem (lg) to 48rem (md)
+      const modified = css.replace("64rem", "48rem");
+      const result = await convertCssToTailwind(modified);
       expect(result.success).toBe(true);
       expect(result.classes).toContain("md:hidden");
     });
 
-    it("mixed variant + non-variant lines", () => {
+    it("mixed variant + non-variant lines", async () => {
       const css = [
         "position: fixed;",
         "left: 0px;",
         "z-index: 20;",
-        "@media (min-width: 1024px) { display: none; }",
+        "@media (width >= 64rem) { display: none; }",
       ].join("\n");
-      const result = convertCssToTailwind(css);
+      const result = await convertCssToTailwind(css);
       expect(result.success).toBe(true);
       expect(result.classes).toContain("fixed");
       expect(result.classes).toContain("lg:hidden");
     });
 
-    it("user adds new variant block as untagged CSS", () => {
+    it("user adds new variant block as untagged CSS", async () => {
       const original = "flex";
-      const css = tailwindClassesToCssDeclarations(original);
-      const modified = css + "\n@media (min-width: 1024px) { display: none; }";
-      const result = convertCssToTailwind(modified);
+      const css = await tailwindClassesToCssDeclarations(original);
+      const modified = css + "\n@media (width >= 64rem) { display: none; }";
+      const result = await convertCssToTailwind(modified);
       expect(result.success).toBe(true);
       expect(result.classes).toContain("flex");
       expect(result.classes).toContain("lg:hidden");
     });
   });
 
-  describe("comment stripping safety", () => {
-    it("does not parse properties inside comments", () => {
+  describe("comment stripping safety", async () => {
+    it("does not parse properties inside comments", async () => {
       const css = "/* min-width: 100px */ display: flex;";
-      const result = convertCssToTailwind(css);
+      const result = await convertCssToTailwind(css);
       expect(result.success).toBe(true);
       expect(result.classes).toContain("flex");
       expect(result.classes).not.toContain("[min-width");

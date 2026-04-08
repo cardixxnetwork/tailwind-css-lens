@@ -1,0 +1,5 @@
+src/
+.git/
+tsconfig.json
+node_modules/.cache/
+*.map

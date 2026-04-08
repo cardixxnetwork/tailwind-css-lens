@@ -1,0 +1,65 @@
+{
+  "name": "css-to-tailwind-inline",
+  "displayName": "CSS to Tailwind Inline",
+  "description": "Write plain CSS in a popup and auto-convert it to Tailwind utility classes appended to className/class attributes.",
+  "version": "0.0.1",
+  "publisher": "ufukomer",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:javascriptreact",
+    "onLanguage:typescriptreact",
+    "onLanguage:html",
+    "onLanguage:vue"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cssTailwind.editCss",
+        "title": "Edit CSS"
+      }
+    ],
+    "configuration": {
+      "title": "CSS to Tailwind Inline",
+      "properties": {
+        "cssTailwind.showCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show CodeLens above lines with className/class attributes."
+        },
+        "cssTailwind.tailwindConfigPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to a custom tailwind.config.js for accurate class resolution."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./ && node esbuild.webview.mjs",
+    "watch": "tsc -watch -p ./ & node esbuild.webview.mjs --watch",
+    "test": "vitest run",
+    "vscode:prepublish": "npm run compile"
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.20.1",
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/theme-one-dark": "^6.1.3",
+    "@codemirror/view": "^6.41.0",
+    "codemirror": "^6.0.2",
+    "css-to-tailwind-translator": "^1.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.28.0",
+    "typescript": "^5.3.3",
+    "vitest": "^4.1.3"
+  }
+}

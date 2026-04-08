@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="icon.png" width="128" height="128" alt="Tailwind CSS Lens" />
+</p>
+
 # Tailwind CSS Lens
 
 Inspect and edit Tailwind utility classes as plain CSS in an interactive CodeLens-powered editor. Click a class attribute, tweak the CSS, and apply — your Tailwind classes update automatically.

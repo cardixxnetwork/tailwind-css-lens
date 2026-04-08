@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { CssToTailwindCodeLensProvider } from "./codeLensProvider";
+import { CssToTailwindHoverProvider } from "./hoverProvider";
 import { CssEditorPanel } from "./cssEditorPanel";
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -10,19 +10,11 @@ export function activate(context: vscode.ExtensionContext): void {
     { language: "vue" },
   ];
 
-  const codeLensProvider = new CssToTailwindCodeLensProvider();
-
   context.subscriptions.push(
-    vscode.languages.registerCodeLensProvider(documentSelectors, codeLensProvider)
-  );
-
-  // Refresh CodeLens when settings change
-  context.subscriptions.push(
-    vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration("cssTailwind")) {
-        codeLensProvider.refresh();
-      }
-    })
+    vscode.languages.registerHoverProvider(
+      documentSelectors,
+      new CssToTailwindHoverProvider()
+    )
   );
 
   // Command: Edit CSS — opens the webview CSS editor panel
@@ -35,16 +27,8 @@ export function activate(context: vscode.ExtensionContext): void {
         valueStart: number,
         valueEnd: number,
         existingClasses: string,
-        _quoteChar: string,
-        isDynamic: boolean
+        quoteChar: string
       ) => {
-        if (isDynamic) {
-          vscode.window.showErrorMessage(
-            "Cannot edit dynamic className expressions. Use a static string instead."
-          );
-          return;
-        }
-
         CssEditorPanel.show(
           context.extensionUri,
           {
@@ -52,7 +36,7 @@ export function activate(context: vscode.ExtensionContext): void {
             line,
             valueStart,
             valueEnd,
-            quoteChar: _quoteChar,
+            quoteChar,
           },
           existingClasses
         );

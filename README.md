@@ -4,7 +4,7 @@ Inspect and edit Tailwind utility classes as plain CSS in an interactive CodeLen
 
 ## Features
 
-- **CodeLens integration** — A clickable "Edit CSS" lens appears above every `className` or `class` attribute
+- **Hover to edit** — Hover over any class string inside `className` or `class` attributes to open the CSS editor, works with static strings and individual strings inside dynamic expressions like `cn()`, `clsx()`, and ternaries
 - **Real CSS editor** — Full CodeMirror 6 editor with syntax highlighting and autocomplete
 - **Tailwind CSS v4 engine** — Uses the real Tailwind compiler for pixel-perfect CSS output
 - **Bidirectional conversion** — Edit CSS and get Tailwind classes back; classes you didn't touch are preserved exactly
@@ -13,7 +13,7 @@ Inspect and edit Tailwind utility classes as plain CSS in an interactive CodeLen
 ## Usage
 
 1. Open a file containing `className` or `class` attributes (JSX, TSX, HTML, Vue)
-2. Click the **Edit CSS** CodeLens that appears above the attribute
+2. Hover over a class string — click **Edit CSS** in the hover popup
 3. A CSS editor opens showing the current Tailwind classes as plain CSS
 4. Edit the CSS — change values, add new properties, or remove lines
 5. Click **Apply** to convert back to Tailwind classes
@@ -29,7 +29,6 @@ Inspect and edit Tailwind utility classes as plain CSS in an interactive CodeLen
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `cssTailwind.showCodeLens` | `true` | Show/hide the "Edit CSS" CodeLens |
 | `cssTailwind.tailwindConfigPath` | `""` | Path to a custom `tailwind.config.js` |
 
 ## License

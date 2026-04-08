@@ -42,11 +42,6 @@
     "configuration": {
       "title": "Tailwind CSS Lens",
       "properties": {
-        "cssTailwind.showCodeLens": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show CodeLens above lines with className/class attributes."
-        },
         "cssTailwind.tailwindConfigPath": {
           "type": "string",
           "default": "",

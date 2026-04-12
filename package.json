@@ -2,7 +2,7 @@
   "name": "tailwind-css-lens",
   "displayName": "Tailwind CSS Lens",
   "description": "Inspect and edit Tailwind utility classes as plain CSS in an interactive CodeLens-powered editor.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "cardixx",
   "author": {
     "name": "Cardixx",

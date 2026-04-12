@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.1] - 2026-04-12
+
+### Changed
+- Added screenshots to README
+
 ## [1.0.0] - 2026-04-08
 
 ### Added

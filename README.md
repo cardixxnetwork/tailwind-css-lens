@@ -6,6 +6,16 @@
 
 Inspect and edit Tailwind utility classes as plain CSS in an interactive CodeLens-powered editor. Click a class attribute, tweak the CSS, and apply — your Tailwind classes update automatically.
 
+## Screenshots
+
+<p align="center">
+  <img src="01.png" alt="CSS Editor editing Tailwind classes" />
+</p>
+
+<p align="center">
+  <img src="02.png" alt="CSS Editor with hover and variant support" />
+</p>
+
 ## Features
 
 - **Hover to edit** — Hover over any class string inside `className` or `class` attributes to open the CSS editor, works with static strings and individual strings inside dynamic expressions like `cn()`, `clsx()`, and ternaries
